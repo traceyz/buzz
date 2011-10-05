@@ -26,3 +26,7 @@ products.each do |product|
   f.puts product["partNumber"]
 end
 f.close
+
+codes = products.collect{|product| product["partNumber"]}
+
+codes.each {|code| puts code}

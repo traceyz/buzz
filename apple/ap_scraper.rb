@@ -15,11 +15,22 @@ require 'utils'
 class ForumProductName < ActiveRecord::Base
 end
 
+require 'open-uri'
+require 'json'
+
 class Review < ActiveRecord::Base
 end
 
+# this will get the keys for up to 30 products
+URL = 'http://store.apple.com/us/internalsearch?searchConfig=&term=bose&page=1&pageSize=30&resultOffset=0'
+json_hash = JSON.parse(open(URL).read)
+raise "web service error" if json_hash.has_key? 'Error'
 
-codes = IO.readlines("codes.txt")
+products = json_hash['body']['match']['list']
+
+raise "empty product codes" if products.empty?
+
+codes = products.collect{|product| product["partNumber"]}
 
 root = 'http://store.apple.com/us/reviews/'
 tail = '?rs=newest'
